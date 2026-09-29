@@ -1,33 +1,54 @@
 <script setup>
 import { useI18n } from "vue-i18n";
+
 const { locale, availableLocales } = useI18n();
+
+const setLocale = (lang) => {
+  locale.value = lang;
+};
 </script>
 
 <template>
-  <div class="lang-switcher">
-    <pv-select-button v-model="locale" :options="availableLocales" aria-labelledby="basic">
-      <template #option="slotProps">
-        <span class="lang-text">{{ slotProps.option.toUpperCase() }}</span>
-      </template>
-    </pv-select-button>
+  <div class="custom-lang-switcher">
+    <button
+        v-for="lang in availableLocales"
+        :key="lang"
+        :class="['lang-btn', { active: locale === lang }]"
+        @click="setLocale(lang)"
+    >
+      {{ lang.toUpperCase() }}
+    </button>
   </div>
 </template>
 
 <style scoped>
-
-:deep(.p-selectbutton .p-button) {
+.custom-lang-switcher {
+  display: inline-flex;
   background-color: #2a3731;
-  border: 1px solid #3f4c45;
-  color: #94a3b8;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.8rem;
+  border-radius: 6px;
+  padding: 3px;
+  gap: 2px;
 }
-:deep(.p-selectbutton .p-button.p-highlight) {
-  background-color: #ea580c;
-  border-color: #ea580c;
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.lang-btn:hover {
   color: white;
 }
-.lang-text {
-  font-weight: 600;
+
+.lang-btn.active {
+  background-color: #ea580c;
+  color: white;
 }
 </style>
