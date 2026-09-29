@@ -44,7 +44,7 @@ const { t } = useI18n();
   width: 100%;
   height: 65px;
   z-index: 1000;
-  padding-bottom: env(safe-area-inset-bottom); /* Para iPhones */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .nav-item {
@@ -83,7 +83,6 @@ const { t } = useI18n();
   border-radius: 50px;
 }
 
-/* Estado activo color naranja */
 .nav-item.active, .nav-item:active {
   color: #ea580c;
 }

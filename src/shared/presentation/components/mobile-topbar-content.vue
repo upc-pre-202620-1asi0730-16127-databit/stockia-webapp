@@ -10,16 +10,14 @@ import LanguageSwitcher from "./language-switcher.vue";
     </div>
 
     <div class="topbar-actions">
-      <!-- Icono de notificaciones con badge -->
+
       <div class="notification-icon">
         <i class="pi pi-envelope" style="font-size: 1.2rem; color: #1e293b;"></i>
         <span class="badge">3</span>
       </div>
 
-      <!-- Avatar de usuario -->
       <div class="avatar">AM</div>
 
-      <!-- El switcher que acabamos de arreglar -->
       <LanguageSwitcher />
     </div>
   </header>
