@@ -1,0 +1,25 @@
+{
+  "language": {
+    "select": "Seleccionar idioma"
+  },
+  "brand": {
+    "subtitle": "La Cantina Verde"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "inventory": "Inventario",
+    "recipes": "Recetas",
+    "prediction": "Predicción",
+    "recommendations": "Recomendaciones",
+    "alerts": "Alertas",
+    "iot": "IoT",
+    "roles": "Roles",
+    "plans": "Planes",
+    "notifications": "Notificaciones",
+    "admin": "Admin",
+    "logout": "Cerrar sesión"
+  },
+  "notifications": {
+    "title": "Notificaciones"
+  }
+}

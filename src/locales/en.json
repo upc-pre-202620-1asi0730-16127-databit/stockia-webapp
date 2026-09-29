@@ -1,0 +1,25 @@
+{
+  "language": {
+    "select": "Select language"
+  },
+  "brand": {
+    "subtitle": "The Green Canteen"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "inventory": "Inventory",
+    "recipes": "Recipes",
+    "prediction": "Prediction",
+    "recommendations": "Recommendations",
+    "alerts": "Alerts",
+    "iot": "IoT",
+    "roles": "Roles",
+    "plans": "Plans",
+    "notifications": "Notifications",
+    "admin": "Admin",
+    "logout": "Log out"
+  },
+  "notifications": {
+    "title": "Notifications"
+  }
+}
