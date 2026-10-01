@@ -21,10 +21,8 @@ lerna-debug.log*
 
 # Variables de entorno (¡Crucial!)
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.development
+.env.production
 *.local
 
 # Testing (Opcional, pero recomendado)
