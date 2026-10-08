@@ -119,7 +119,7 @@ onMounted(async () => {
 }
 .see-all {
   color: var(--color-accent-strong);
-  font-weight: 600; 
+  font-weight: 600;
   font-size: .9rem;
 }
 
