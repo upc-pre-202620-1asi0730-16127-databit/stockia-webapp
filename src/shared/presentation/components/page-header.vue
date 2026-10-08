@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * Presentation component with the title, description and main actions of a view.
+ * The title is the only `h1` of the page, so screen readers can navigate by headings.
+ */
 defineProps({
   title: { type: String, required: true },
   description: { type: String, default: '' },
@@ -26,13 +30,6 @@ defineProps({
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
-.page-header p {
-  max-width: 620px; margin: 0;
-}
-.page-header-actions {
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-  flex-wrap: wrap;
-}
+.page-header p { max-width: 620px; margin: 0; }
+.page-header-actions { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
 </style>
