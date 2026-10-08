@@ -28,7 +28,8 @@ const routes = [
                     import('./stock-management/presentation/views/inventory-list.vue'), },
             { path: 'recipes', name: 'recipes', component: () =>
                     import('./stock-management/presentation/views/recipe-list.vue'), },
-            //{ path: 'sales', name: 'sales', component: () => import('./sales-order/presentation/views/sales-history.vue') },
+            { path: 'sales', name: 'sales', component: () =>
+                    import('./receipts-management/presentation/views/receipts-history.vue'), },
             { path: 'forecast', name: 'forecast', component: () =>
                     import('./demand-forecasting/presentation/views/forecast-dashboard.vue') },
             { path: 'alerts', name: 'alerts', component: () =>

@@ -1,5 +1,5 @@
-import { BaseApi } from '../../shared/infraestructure/base-api.js';
-import { BaseEndpoint } from '../../shared/infraestructure/base-endpoint.js';
+import { BaseApi } from '../../shared/infrastructure/base-api.js';
+import { BaseEndpoint } from '../../shared/infrastructure/base-endpoint.js';
 
 const alertsEndpointPath = import.meta.env.VITE_ALERTS_ENDPOINT_PATH;
 const recommendationsEndpointPath = import.meta.env.VITE_RECOMMENDATIONS_ENDPOINT_PATH;
