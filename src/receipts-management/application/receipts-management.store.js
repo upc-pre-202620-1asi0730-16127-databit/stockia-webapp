@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import { SalesApi } from '../infrastructure/receipts-management.api.js';
 import { SaleAssembler } from '../infrastructure/receipt.assembler.js';
 import { Sale, SaleChannel, SaleStatus } from '../domain/model/receipt.entity.js';
-import { useInventoryStore } from '../../product-inventory/application/inventory.store.js';
+import { useStockManagementStore } from '../../stock-management/application/stock-management.store.js';
 import { BusinessRuleError } from '../../shared/domain/model/business-rule-error.js';
 
 const salesApi = new SalesApi();
@@ -43,7 +43,7 @@ export const useSalesStore = defineStore('sales', () => {
    * @returns {Promise<Sale>}
    */
   async function registerSale(recipeId) {
-    const inventoryStore = useInventoryStore();
+    const inventoryStore = useStockManagementStore();
     // Always validate against fresh stock, never against a stale screen.
     await Promise.all([inventoryStore.loadItems(), inventoryStore.loadRecipes()]);
 
@@ -67,7 +67,7 @@ export const useSalesStore = defineStore('sales', () => {
     const created = SaleAssembler.toEntityFromResource(response.data);
     sales.value = [created, ...sales.value];
 
-    // DishSold → RecipeStockDeductionService (Inventory & Recipe Management).
+    // DishSold → RecipeStockDeductionService (Stock Management).
     await inventoryStore.deductStockForRecipe(recipe);
     return created;
   }
