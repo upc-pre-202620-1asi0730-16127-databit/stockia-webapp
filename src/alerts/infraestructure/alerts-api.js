@@ -21,7 +21,7 @@ export class AlertsApi extends BaseApi {
     createAlert(resource) {
         return this.#alertsEndpoint.create(resource);
     }
-    
+
     updateAlert(id, resource) {
         return this.#alertsEndpoint.update(id, resource);
     }
