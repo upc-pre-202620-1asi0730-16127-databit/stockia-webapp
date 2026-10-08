@@ -1,54 +1,43 @@
 <script setup>
-import { useI18n } from "vue-i18n";
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { SUPPORTED_LOCALES } from '../../../i18n.js';
 
-const { locale, availableLocales } = useI18n();
+/**
+ * Header control that switches the interface between English and Spanish.
+ * Each option says its language name to screen readers.
+ */
+const { locale, t } = useI18n();
 
-const setLocale = (lang) => {
-  locale.value = lang;
-};
+const options = computed(() => SUPPORTED_LOCALES.map((code) => ({ code, label: code.toUpperCase(), name: t(`language.${code}`) })));
+
+const selected = computed({
+  get: () => locale.value,
+  set: (value) => {
+    if (value) locale.value = value;
+  },
+});
 </script>
 
 <template>
-  <div class="custom-lang-switcher">
-    <button
-        v-for="lang in availableLocales"
-        :key="lang"
-        :class="['lang-btn', { active: locale === lang }]"
-        @click="setLocale(lang)"
+  <div class="language-switcher" role="group" :aria-label="t('language.switcher')">
+    <i class="pi pi-globe" aria-hidden="true" />
+    <pv-select-button
+      v-model="selected"
+      :options="options"
+      option-label="label"
+      option-value="code"
+      :allow-empty="false"
+      size="small"
     >
-      {{ lang.toUpperCase() }}
-    </button>
+      <template #option="{ option }">
+        <span :lang="option.code" :aria-label="option.name">{{ option.label }}</span>
+      </template>
+    </pv-select-button>
   </div>
 </template>
 
 <style scoped>
-.custom-lang-switcher {
-  display: inline-flex;
-  background-color: #2a3731;
-  border-radius: 6px;
-  padding: 3px;
-  gap: 2px;
-}
-
-.lang-btn {
-  background: transparent;
-  border: none;
-  color: #a1a1aa;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.lang-btn:hover {
-  color: white;
-}
-
-.lang-btn.active {
-  background-color: #ea580c;
-  color: white;
-}
+.language-switcher { display: inline-flex; align-items: center; gap: .4rem; }
+.language-switcher > .pi { color: var(--color-muted); }
 </style>

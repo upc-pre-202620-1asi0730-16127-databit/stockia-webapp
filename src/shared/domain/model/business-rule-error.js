@@ -7,12 +7,16 @@
  * the active language with `t(error.code, error.params)`.
  */
 export class BusinessRuleError extends Error {
-    constructor(code, params = {}) {
-        super(code);
-        this.name = 'BusinessRuleError';
-        this.code = code;
-        this.params = params;
-    }
+  /**
+   * @param {string} code i18n message key
+   * @param {Record<string, unknown>} [params] values interpolated in the message
+   */
+  constructor(code, params = {}) {
+    super(code);
+    this.name = 'BusinessRuleError';
+    this.code = code;
+    this.params = params;
+  }
 }
 
 /**
@@ -23,6 +27,6 @@ export class BusinessRuleError extends Error {
  * @returns {{code: string, params: Record<string, unknown>}}
  */
 export function toErrorMessage(error, fallbackCode) {
-    if (error instanceof BusinessRuleError) return { code: error.code, params: error.params };
-    return { code: fallbackCode, params: {} };
+  if (error instanceof BusinessRuleError) return { code: error.code, params: error.params };
+  return { code: fallbackCode, params: {} };
 }
