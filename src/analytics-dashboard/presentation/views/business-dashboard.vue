@@ -4,13 +4,13 @@ import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import { useIamStore } from '../../../iam/application/iam.store.js';
 import { useStockManagementStore } from '../../../stock-management/application/stock-management.store.js';
-import { useAlertsStore } from '../../../alerts/application/alerts.store.js';
+import { useAlertsStore } from '../../../notifications-messaging/application/alerts.store.js';
 import { useForecastStore } from '../../../demand-forecasting/application/forecast.store.js';
 import { useMoney } from '../../../shared/presentation/composables/use-money.js';
 import { useQuantity } from '../../../shared/presentation/composables/use-quantity.js';
 import PageHeader from '../../../shared/presentation/components/page-header.vue';
 import StockStatusTag from '../../../stock-management/presentation/components/stock-status-tag.vue';
-import AlertSeverityTag from '../../../alerts/presentation/components/alert-severity-tag.vue';
+import AlertSeverityTag from '../../../notifications-messaging/presentation/components/alert-severity-tag.vue';
 import ForecastChart from '../../../demand-forecasting/presentation/components/forecast-chart.vue';
 
 /**
