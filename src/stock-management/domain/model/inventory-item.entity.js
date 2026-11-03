@@ -137,7 +137,7 @@ export class InventoryItem {
     return this.daysToExpire >= 0 && this.daysToExpire <= 3;
   }
 
-  /** @returns {boolean} needs attention on the dashboard */
+  /** @returns {boolean} needs attention on the analytics-dashboard */
   get needsAttention() {
     return this.status !== StockStatus.AVAILABLE;
   }

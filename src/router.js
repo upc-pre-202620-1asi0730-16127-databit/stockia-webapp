@@ -21,9 +21,9 @@ const routes = [
         component: () => import('./shared/presentation/components/layout.vue'),
         meta: { requiresAuth: true },
         children: [
-            { path: '', redirect: { name: 'dashboard' } },
-            { path: 'dashboard', name: 'dashboard', component: () =>
-                    import('./dashboard/presentation/views/business-dashboard.vue') },
+            { path: '', redirect: { name: 'analytics-dashboard' } },
+            { path: 'analytics-dashboard', name: 'analytics-dashboard', component: () =>
+                    import('./analytics-dashboard/presentation/views/business-dashboard.vue') },
             { path: 'inventory', name: 'inventory', component: () =>
                     import('./stock-management/presentation/views/inventory-list.vue'), },
             { path: 'recipes', name: 'recipes', component: () =>
@@ -85,7 +85,7 @@ router.beforeEach((to, from) => {
     }
     if (to.matched.some((record) => record.meta.adminOnly) && !iamStore.isAdmin) {
         notify({ severity: 'error', summary: 'access.denied', detail: 'access.denied-detail' });
-        // Stay on the current view when there is one; otherwise go to the dashboard.
+        // Stay on the current view when there is one; otherwise go to the analytics-dashboard.
         return from.matched.length > 0 && from.path.startsWith('/app') ? false : { name: 'dashboard' };
     }
     if (to.meta.guestOnly && iamStore.isAuthenticated) return { name: 'dashboard' };

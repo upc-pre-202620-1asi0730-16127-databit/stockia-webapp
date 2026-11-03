@@ -62,7 +62,7 @@ async function submit() {
   loading.value = true;
   try {
     await iamStore.signIn(form.email, form.password);
-    const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/app') ? route.query.redirect : '/app/dashboard';
+    const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/app') ? route.query.redirect : '/app/analytics-dashboard';
     router.push(redirect);
   } catch (error) {
     errorMessage.value = toErrorMessage(error, 'errors.network');
