@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useIamStore } from '../../../iam/application/iam.store.js';
-import PageHeader from '../../../shared/presentation/components/page-header.vue';
+import PageHeader from '../components/page-header.vue';
 
 /**
  * Settings › Get help: a step-by-step guide of the StockIA flow for new users
@@ -20,7 +20,7 @@ const STEPS = [
   { key: 'recipes', icon: 'pi pi-book', to: '/app/recipes' },
   { key: 'sell', icon: 'pi pi-shopping-cart', to: '/app/recipes' },
   { key: 'sales', icon: 'pi pi-receipt', to: '/app/sales' },
-  { key: 'alerts', icon: 'pi pi-bell', to: '/app/notifications-messaging' },
+  { key: 'alerts', icon: 'pi pi-bell', to: '/app/alerts' },
   { key: 'forecast', icon: 'pi pi-chart-line', to: '/app/forecast' },
   { key: 'recommendations', icon: 'pi pi-lightbulb', to: '/app/recommendations', adminOnly: true },
   { key: 'team', icon: 'pi pi-users', to: '/app/roles', adminOnly: true },

@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useIamStore } from '../../../iam/application/iam.store.js';
-import PageHeader from '../../../shared/presentation/components/page-header.vue';
+import PageHeader from '../components/page-header.vue';
 
 /**
  * Settings menu: Account settings, Get help, Upgrade plan (Administrator) and
