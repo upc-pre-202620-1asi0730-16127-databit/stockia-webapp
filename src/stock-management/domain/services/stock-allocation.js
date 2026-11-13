@@ -20,8 +20,8 @@ export const ShortageReason = Object.freeze({
 
 /**
  * @typedef {import('../model/inventory-item.entity.js').InventoryItem} InventoryItem
- * @typedef {import('../model/recipe.entity.js').Recipe} Recipe
- * @typedef {import('../model/recipe.entity.js').RecipeIngredientLine} RecipeIngredientLine
+ * @typedef {import('../../../recipes-management/domain/model/recipe.entity.js').Recipe} Recipe
+ * @typedef {import('../../../recipes-management/domain/model/recipe.entity.js').RecipeIngredientLine} RecipeIngredientLine
  *
  * @typedef {Object} Shortage
  * @property {string} itemName
@@ -99,7 +99,7 @@ export function recipeCost(recipe, items) {
 }
 
 /**
- * Stock allocation for a sale (domain service of Inventory & Recipe Management).
+ * Stock allocation for a sale (domain service of Stock Management).
  *
  * @remarks
  * Rules:

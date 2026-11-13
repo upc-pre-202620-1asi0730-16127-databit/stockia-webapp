@@ -31,9 +31,9 @@ const { formatMoney } = useMoney();
 const { formatQuantity } = useQuantity();
 const toast = useToast();
 const confirm = useConfirm();
-const inventoryStore = useStockManagementStore();
+const stockStore = useStockManagementStore();
 
-const loading = ref(!inventoryStore.itemsLoaded);
+const loading = ref(!stockStore.itemsLoaded);
 const dialogVisible = ref(false);
 const editingId = ref(null);
 const submitted = ref(false);
@@ -54,7 +54,7 @@ const errors = computed(() => (submitted.value
 /** Lots per product and the lot that sales use first (freshest, not expired). */
 const lotInfo = computed(() => {
   const groups = new Map();
-  for (const item of inventoryStore.items) {
+  for (const item of stockStore.items) {
     if (!groups.has(item.productKey)) groups.set(item.productKey, []);
     groups.get(item.productKey).push(item);
   }
@@ -73,7 +73,7 @@ function showError(error, fallback) {
 
 onMounted(async () => {
   try {
-    await inventoryStore.loadItems();
+    await stockStore.loadItems();
   } catch (error) {
     showError(error, 'errors.load');
   } finally {
@@ -108,7 +108,7 @@ async function save() {
   }
   saving.value = true;
   try {
-    await inventoryStore.saveItem({ ...form, quantity: DecimalQuantity.toText(form.quantity), minThreshold: DecimalQuantity.toText(form.minThreshold) }, editingId.value);
+    await stockStore.saveItem({ ...form, quantity: DecimalQuantity.toText(form.quantity), minThreshold: DecimalQuantity.toText(form.minThreshold) }, editingId.value);
     dialogVisible.value = false;
     // A new supply is the first row of the list: go back to the first page.
     if (!editingId.value) firstRow.value = 0;
@@ -133,7 +133,7 @@ function remove(item) {
     acceptProps: { label: t('inventory.delete-accept'), icon: 'pi pi-trash', severity: 'danger' },
     accept: async () => {
       try {
-        await inventoryStore.deleteItem(item);
+        await stockStore.deleteItem(item);
         toast.add({ severity: 'success', summary: t('inventory.deleted', { name: item.name }), life: 2500 });
       } catch (error) {
         showError(error, 'errors.delete');
@@ -151,7 +151,7 @@ function remove(item) {
   </page-header>
 
   <section class="surface-card" :aria-label="t('inventory.table-label')">
-    <pv-data-table v-model:first="firstRow" :value="inventoryStore.items" :loading="loading" data-key="id"
+    <pv-data-table v-model:first="firstRow" :value="stockStore.items" :loading="loading" data-key="id"
       paginator :rows="10" :rows-per-page-options="[10, 25, 50]" :aria-label="t('inventory.table-label')">
       <template #empty><div class="empty-state">{{ t('inventory.empty') }}</div></template>
       <pv-column field="name" :header="t('inventory.columns.item')" sortable>

@@ -1,14 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import { StockManagementApi } from '../infrastructure/stock-management.api.js';
+import { StockManagementApi } from '../infrastructure/stock-management-api.js';
 import { InventoryItemAssembler } from '../infrastructure/inventory-item.assembler.js';
-import { RecipeAssembler } from '../infrastructure/recipe.assembler.js';
 import { InventoryItem, StockStatus, expirationDateFor } from '../domain/model/inventory-item.entity.js';
-import { Recipe } from '../domain/model/recipe.entity.js';
-import { BusinessRuleError } from '../../shared/domain/model/business-rule-error.js';
 import { planAllocation } from '../domain/services/stock-allocation.js';
 
-const inventoryApi = new StockManagementApi();
+const stockManagementApi = new StockManagementApi();
 
 /**
  * The API assigns increasing ids, so the highest id is the last one added.
@@ -22,23 +19,21 @@ function newestFirst(list) {
 }
 
 /**
- * Application layer of the Stock Management Bounded Context.
+ * Application layer of the Stock Management Bounded Context: supplies (lots)
+ * with their expiration date and status.
  *
  * @remarks
- * - `planSale` checks a recipe against the stock with the allocation domain
- *   service (expired lots are never used; the freshest lot goes first).
- * - `deductStockForRecipe` plays the role of RecipeStockDeductionService: it is
- *   invoked by the Receipts Management store right after a sale is
- *   confirmed (reaction to the `DishSold` domain event), never by the UI.
- * - Lists are kept newest first, so a new supply or recipe appears at the top.
+ * - `planSale` checks what a dish needs against the stock with the allocation
+ *   domain service (expired lots are never used; the freshest lot goes first),
+ *   so Recipes Management can show which dishes are ready to sell.
+ * - The stock deduction of a sale runs in the StockIA Platform API, in the
+ *   same transaction as the sale.
+ * - The list is kept newest first, so a new supply appears at the top.
  */
 export const useStockManagementStore = defineStore('stock-management', () => {
   /** @type {import('vue').Ref<InventoryItem[]>} */
   const items = ref([]);
-  /** @type {import('vue').Ref<Recipe[]>} */
-  const recipes = ref([]);
   const itemsLoaded = ref(false);
-  const recipesLoaded = ref(false);
 
   const attentionCount = computed(() => items.value.filter((item) => item.status === StockStatus.LOW || item.status === StockStatus.CRITICAL).length);
   const expiringSoonCount = computed(() => items.value.filter((item) => item.isExpiringSoon).length);
@@ -46,15 +41,9 @@ export const useStockManagementStore = defineStore('stock-management', () => {
   const itemsNeedingAttention = computed(() => items.value.filter((item) => item.needsAttention));
 
   async function loadItems() {
-    const response = await inventoryApi.getInventoryItems();
+    const response = await stockManagementApi.getInventoryItems();
     items.value = newestFirst(InventoryItemAssembler.toEntitiesFromResponse(response));
     itemsLoaded.value = true;
-  }
-
-  async function loadRecipes() {
-    const response = await inventoryApi.getRecipes();
-    recipes.value = newestFirst(RecipeAssembler.toEntitiesFromResponse(response));
-    recipesLoaded.value = true;
   }
 
   /**
@@ -69,83 +58,33 @@ export const useStockManagementStore = defineStore('stock-management', () => {
     const item = new InventoryItem({ ...form, id: id ?? 0, name: form.name.trim(), unit: form.unit.trim(), expirationDate: expirationDateFor(form.shelfLifeDays) });
     const resource = InventoryItemAssembler.toResourceFromEntity(item);
     if (id) {
-      await inventoryApi.updateInventoryItem(id, resource);
+      await stockManagementApi.updateInventoryItem(id, resource);
     } else {
       delete resource.id;
-      await inventoryApi.createInventoryItem(resource);
+      await stockManagementApi.createInventoryItem(resource);
     }
     await loadItems();
   }
 
   /** @param {InventoryItem} item */
   async function deleteItem(item) {
-    await inventoryApi.deleteInventoryItem(item.id);
+    await stockManagementApi.deleteInventoryItem(item.id);
     await loadItems();
   }
 
   /**
-   * @param {{dishName: string, ingredients: import('../domain/model/recipe.entity.js').RecipeIngredientLine[]}} form
-   * @param {number|null} id `null` to create a new recipe
-   */
-  async function saveRecipe(form, id = null) {
-    if (!form.dishName.trim() || form.ingredients.length === 0) throw new BusinessRuleError('recipes.errors.incomplete');
-    const recipe = new Recipe({ id: id ?? 0, dishName: form.dishName.trim(), ingredients: form.ingredients, active: true });
-    const resource = RecipeAssembler.toResourceFromEntity(recipe);
-    if (id) {
-      await inventoryApi.updateRecipe(id, resource);
-    } else {
-      delete resource.id;
-      await inventoryApi.createRecipe(resource);
-    }
-    await loadRecipes();
-  }
-
-  /** @param {Recipe} recipe */
-  async function deleteRecipe(recipe) {
-    await inventoryApi.deleteRecipe(recipe.id);
-    await loadRecipes();
-  }
-
-  /**
-   * Price of a dish: sum of the cost of its ingredients (see {@link Recipe#priceWith}).
+   * Checks whether the stock can supply a dish, without changing anything.
    *
-   * @param {Recipe} recipe
-   * @returns {number}
-   */
-  function priceOf(recipe) {
-    return recipe.priceWith(items.value);
-  }
-
-  /**
-   * Checks whether the stock can supply the recipe, without changing anything.
-   *
-   * @param {Recipe} recipe
+   * @param {{ingredients: {inventoryItemId: number, quantityRequired: string}[]}} dish a recipe of Recipes Management
    * @param {number} [portions]
    * @returns {import('../domain/services/stock-allocation.js').AllocationPlan}
    */
-  function planSale(recipe, portions = 1) {
-    return planAllocation(recipe, items.value, portions);
-  }
-
-  /**
-   * RecipeStockDeductionService: discounts from the lots the quantity the
-   * sold recipe requires, freshest lot first and never from an expired lot.
-   *
-   * @param {Recipe} recipe
-   * @param {number} [portions]
-   */
-  async function deductStockForRecipe(recipe, portions = 1) {
-    const plan = planSale(recipe, portions);
-    if (!plan.canFulfill) throw new BusinessRuleError('sales.errors.cannot-sell', { dish: recipe.dishName, shortages: plan.shortages });
-    await Promise.all(plan.deductions.map(({ item, remaining }) => {
-      const resource = InventoryItemAssembler.toResourceFromEntity(new InventoryItem({ ...item, quantity: remaining }));
-      return inventoryApi.updateInventoryItem(item.id, resource);
-    }));
-    await loadItems();
+  function planSale(dish, portions = 1) {
+    return planAllocation(dish, items.value, portions);
   }
 
   return {
-    items, recipes, itemsLoaded, recipesLoaded, attentionCount, expiringSoonCount, inventoryValue, itemsNeedingAttention,
-    loadItems, loadRecipes, saveItem, deleteItem, saveRecipe, deleteRecipe, priceOf, planSale, deductStockForRecipe,
+    items, itemsLoaded, attentionCount, expiringSoonCount, inventoryValue, itemsNeedingAttention,
+    loadItems, saveItem, deleteItem, planSale,
   };
 });
